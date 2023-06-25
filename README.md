@@ -8,7 +8,7 @@ it should work with any flexible PVC pipe and any camping rods.
 
 * The 3D printed parts from Lichtsaeule.scad
 * Camping rods (I used cheap aluminium rods with 30cm length + 4cm
-    coupling extension, 8.5mm outer diameter/7.2mm coupling diameter)
+    coupling extension, 8.4mm outer diameter/7.2mm coupling diameter)
 * 1m flexible PVC pipe with spiral wire (in germany, it's called
     "flexibler Abluftschlauch (PVC, weiß)")
 * 1m of any IP30 LED stripe with a controller that fits in the base
