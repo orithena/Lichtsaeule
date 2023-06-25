@@ -1,14 +1,26 @@
 
+// the nominal diameter of the PVC pipe
 pipe_d = 100;
+
+// how thick should the walls be?
 pipe_wall = 1.4;
+
+// how tall should the rings be where the PVC pipe fits into?
 pipe_height = 8;
+
+// what should the total inner height be?
 pipe_base_height = 80;
+
+// how much wider does the spiral of the PVC pipe get when compressed?
 pipe_d_growth = 10;
 
+// how wide is the space inside the compressed PVC pipe?
 stow_d = 72;
 
+// how thick should the top/bottom plates be?
 plates_t = 1;
 
+// how much space do you need for your chips and battery?
 chip_height = 18;
 
 // Warning: Outer Diameter vs Hole Diameter problem.
@@ -18,17 +30,24 @@ chip_height = 18;
 stake_small_d = 7.32;
 stake_big_d = 8.86;
 
+// how much wall should be around holes for stakes?
 stake_wall = 1;
 
+// how much rim should be on the cap?
 cap_rim = 2;
 
+// how much tolerance to leave between parts that should move against each other?
 tol = 0.1;
+
+// how much gap to leave for the PVC pipe foil to get stuck in there?
 foil_gap = 0.3;
 
+// locking notches: how big to make the notches and the grooves they are sliding in?
 notch_r = 1.5;
 notch_groove_r = 1.8;
 
-preview = "explode";
+// preview part placement: either "exploded" or "compact"
+preview = "exploded";
 
 $fn=32;
 
@@ -50,7 +69,7 @@ module cap(height, thick, rim, outer_d, inner_d) {
 
 module with_center_hole(hole_d) {
     render() difference() {
-        union() children();
+        children();
         cylinder(h=800, r=hole_d/2, center=true, $fn=24);
     }
 }
@@ -63,15 +82,15 @@ module volcano(height, base_inner_d, outer_d, inner_d) {
 }
 
 module donut(r_center, r_tyre) {
-    rotate_extrude(angle=360) {
-        translate([r_center, 0]) circle(r=r_tyre, $fn=96);
+    render() rotate_extrude(angle=360) {
+        translate([r_center, 0]) circle(r=r_tyre, $fn=96, $fa=1, $fs=0.4);
     }
 }
 
-module with_center_nut(height, base_inner_d, hole_d, wall) {
-    render() union() {
+module with_center_nut(height, inner_d, hole_d, wall) {
+    render() {
         children();
-        volcano(height, base_inner_d + wall, hole_d + wall, hole_d);
+        volcano(height, inner_d + wall, hole_d + wall, hole_d);
     }
 }
 
@@ -79,18 +98,20 @@ base_inner_d = pipe_d + (pipe_wall*2) + pipe_d_growth + (tol*2);
 
 module upper_cap() {
     with_center_hole(stake_small_d) {
-        with_center_nut(pipe_height, stake_small_d*3, stake_small_d, (stake_wall*2)) {
-            cap(pipe_height, plates_t, cap_rim, pipe_d+(pipe_wall*2), pipe_d);
-            difference() {
-                cap(pipe_height, plates_t, cap_rim, base_inner_d-(tol*2), base_inner_d-(pipe_wall*5)-(tol*2));
-                for(a = [0:30:360]) {
-                    rotate([0,0,a])
-                    translate([base_inner_d/2-tol,0,pipe_height/2])
-                    cylinder(h=pipe_height/2, r=notch_groove_r);
-                }
-                translate([0,0,pipe_height/2])
-                    donut(base_inner_d/2-tol, notch_groove_r);
+        _height = pipe_height;
+        _inner_d = stake_small_d*3;
+        _hole_d = stake_small_d;
+        _wall = (stake_wall*2);
+        volcano(_height, _inner_d+_wall, _hole_d+_wall, _hole_d);
+        difference() {
+            cap(pipe_height, plates_t, cap_rim, base_inner_d-(tol*2), pipe_d);
+            for(a = [0:30:360]) {
+                rotate([0,0,a])
+                translate([base_inner_d/2-tol,0,pipe_height/2])
+                cylinder(h=pipe_height/2, r=notch_groove_r, $fn=12);
             }
+            translate([0,0,pipe_height/2])
+                donut(base_inner_d/2-tol, notch_groove_r);
         }
     }
 }
@@ -108,7 +129,7 @@ module upper_ring() {
 }
 
 inner_height = pipe_base_height - plates_t - chip_height - pipe_height;
-echo("Inner Height", inner_height);
+echo("Inner Height w/o chip_height", inner_height);
 
 if( $preview ) {
     // measurement block to see whether a 18650 fits
@@ -208,5 +229,3 @@ module parts() {
 
 parts();
 base();
-
-
