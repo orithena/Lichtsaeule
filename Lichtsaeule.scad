@@ -11,8 +11,13 @@ plates_t = 1;
 
 chip_height = 18;
 
+// Warning: Outer Diameter vs Hole Diameter problem.
+// You will need to add about 0.15 to the measured outer diameter
+// of your stakes, but it's pretty much related to your printer's 
+// tolerances and the print profile chosen.
 stake_small_d = 7.32;
 stake_big_d = 8.86;
+
 stake_wall = 1;
 
 cap_rim = 2;
@@ -23,7 +28,7 @@ foil_gap = 0.3;
 notch_r = 1.5;
 notch_groove_r = 1.8;
 
-preview = "exploded";
+preview = "explode";
 
 $fn=32;
 
@@ -77,7 +82,7 @@ module upper_cap() {
         with_center_nut(pipe_height, stake_small_d*3, stake_small_d, (stake_wall*2)) {
             cap(pipe_height, plates_t, cap_rim, pipe_d+(pipe_wall*2), pipe_d);
             difference() {
-                cap(pipe_height, plates_t, cap_rim, base_inner_d-(tol*2), base_inner_d-(pipe_wall*4)-(tol*2));
+                cap(pipe_height, plates_t, cap_rim, base_inner_d-(tol*2), base_inner_d-(pipe_wall*5)-(tol*2));
                 for(a = [0:30:360]) {
                     rotate([0,0,a])
                     translate([base_inner_d/2-tol,0,pipe_height/2])
